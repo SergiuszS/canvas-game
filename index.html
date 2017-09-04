@@ -3,6 +3,7 @@
 <head>
 <title>My canvas game</title>
 <link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
 </head>
 <body>
 <canvas id="myCanvas" width="1000" height="600" style="border:1px solid #d3d3d3;">
@@ -13,8 +14,50 @@
 //main
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
+var SELECTED = "none";
+var SELECTED_ANY = false;
+var CIRCLES = [];
 
+var qx = [100, 300, 800, 400, 500, 550];
+var qy = [100, 500, 400, 400, 500, 550];
+var qradius = [30, 30, 35, 55, 20, 15, 10];
 
+for (i = 0; i < 6; i++) { 
+    CIRCLES[i] = new Circle(ctx, i, qx[i], qy[i], qradius[i]);
+    CIRCLES[i].draw();
+    CIRCLES[i].writeNumber();
+}
+CIRCLES[0].ownedBy = "player";
+CIRCLES[0].color = "yellow";
+CIRCLES[0].numbers = 500;
+CIRCLES[0].writeNumber();
+//SELECT
+
+canvas.addEventListener("mousedown", getPosition, false);
+
+function getPosition(event)
+{
+  var x = event.x;
+  var y = event.y;
+  var selectedAny = false;
+  var canvas = document.getElementById("myCanvas");
+  x -= canvas.offsetLeft;
+  y -= canvas.offsetTop;
+  for(let item of CIRCLES){
+  if(item.clicked(x, y)){
+      item.onClicked();
+      selectedAny = true;
+    }
+  }
+if(!selectedAny){
+        for(let item of CIRCLES){
+            item.selected = false;
+            item.writeNumber();
+        }
+        SELECTED_ANY = false;
+        SELECTED = "none";
+    }
+}
 </script>
 
 </html>
